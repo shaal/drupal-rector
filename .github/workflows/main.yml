@@ -25,5 +25,7 @@ jobs:
                 composer create-project drupal/recommended-project drupal-rector-dir --dev --no-progress
                 cd drupal-rector-dir
                 composer require palantirnet/drupal-rector
+                mkdir -p web/modules/custom
+                cp -r vendor/palantirnet/drupal-rector/rector_examples web/modules/custom/.
                 cp vendor/palantirnet/drupal-rector/rector.yml .
                 vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug
