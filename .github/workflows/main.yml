@@ -1,0 +1,29 @@
+name: drupal_rector_test
+
+on:
+    pull_request: null
+    push:
+        branches:
+            - master
+
+jobs:
+    test_with_drupal:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 7.3
+                  coverage: none # disable xdebug, pcov
+                  extensions: "intl"
+
+            # Run standalone install in non-root package, ref https://github.com/rectorphp/rector/issues/732
+            - run: |
+                # Install Drupal with Drupal-Rector
+                mkdir drupal-rector-dir
+                composer create-project drupal/recommended-project drupal-rector-dir --dev --no-progress
+                cd drupal-rector-dir
+                composer require palantirnet/drupal-rector
+                cp vendor/palantirnet/drupal-rector/rector.yml .
+                vendor/bin/rector process web/modules/custom/rector_examples --dry-run --debug
